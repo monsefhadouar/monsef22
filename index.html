@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر إكسسوارات الهواتف - Mobile Accessories Store</title>
+    <meta name="description" content="متجر متخصص في بيع إكسسوارات الهواتف المحمولة - أجود المنتجات وأفضل الأسعار">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --dark: #0f172a;
+            --gray: #64748b;
+        }
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .product-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .rating-stars {
+            color: #fbbf24;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .payment-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .payment-option:hover, .payment-option.selected {
+            border-color: var(--primary);
+            background: #f8f9ff;
+        }
+        
+        .promo-banner {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 12px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .hero-stats {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-mobile-alt text-3xl" style="color: var(--primary)"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">متجر الإكسسوارات</h1>
+                        <p class="text-sm text-gray-500">Mobile Accessories</p>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#home" class="text-gray-700 hover:text-indigo-600 font-semibold transition">الرئيسية</a>
+                    <a href="#products" class="text-gray-700 hover:text-indigo-600 font-semibold transition">المنتجات</a>
+                    <a href="#categories" class="text-gray-700 hover:text-indigo-600 font-semibold transition">الأقسام</a>
+                    <a href="#contact" class="text-gray-700 hover:text-indigo-600 font-semibold transition">اتصل بنا</a>
+                </nav>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSearch()" class="text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                    <button onclick="toggleCart()" class="relative text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="cart-badge">0</span>
+                    </button>
+                    <button onclick="showLogin()" class="hidden md:block btn-primary">
+                        <i class="fas fa-user ml-2"></i>
+                        تسجيل الدخول
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div id="search-bar" class="hidden mt-4">
+                <input type="text" placeholder="ابحث عن المنتجات..." 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-center md:text-right">
+                    <h2 class="text-5xl font-bold mb-6 leading-tight">أفضل إكسسوارات الهواتف المحمولة</h2>
+                    <p class="text-xl mb-8 text-white/90">اكتشف مجموعة واسعة من الإكسسوارات عالية الجودة لهاتفك</p>
+                    <div class="flex gap-4 justify-center md:justify-end">
+                        <button onclick="scrollToProducts()" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 transition">
+                            تسوق الآن
+                        </button>
+                        <button onclick="scrollToCategories()" class="border-2 border-white px-8 py-4 rounded-lg font-bold hover:bg-white/10 transition">
+                            الأقسام
+                        </button>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <img src="https://placehold.co/600x400?text=Modern+smartphone+with+premium+accessories+including+wireless+charger+case+and+earbuds+on+gradient+background" alt="Modern smartphone with premium accessories including wireless charger case and earbuds on gradient background" class="rounded-2xl shadow-2xl mx-auto">
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+                <div class="hero-stats p-6 rounded-xl text-center">
+                    <p class="text-3xl font-bold mb-2">5000+</p>
+                    <p class="text-white/80">منتج متوفر</p>
+                </div>
+                <div class="hero-stats p-6 rounded-xl text-center">
+                    <p class="text-3xl font-bold mb-2">15000+</p>
+                    <p class="text-white/80">عميل سعيد</p>
+                </div>
+                <div class="hero-stats p-6 rounded-xl text-center">
+                    <p class="text-3xl font-bold mb-2">24/7</p>
+                    <p class="text-white/80">دعم فني</p>
+                </div>
+                <div class="hero-stats p-6 rounded-xl text-center">
+                    <p class="text-3xl font-bold mb-2">توصيل سريع</p>
+                    <p class="text-white/80">لجميع المدن</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl font-bold text-gray-800 mb-4">الأقسام الرئيسية</h2>
+                <p class="text-gray-600 text-lg">اختر القسم المناسب لاحتياجاتك</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div onclick="filterProducts('cases')" class="hover-lift bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl text-center cursor-pointer">
+                    <i class="fas fa-mobile-alt category-icon"></i>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">جرابات الهاتف</h3>
+                    <p class="text-gray-600 text-sm">حماية أنيقة لهاتفك</p>
+                </div>
+                
+                <div onclick="filterProducts('chargers')" class="hover-lift bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl text-center cursor-pointer">
+                    <i class="fas fa-charging-station category-icon"></i>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">الشواحن</h3>
+                    <p class="text-gray-600 text-sm">شحن سريع وآمن</p>
+                </div>
+                
+                <div onclick="filterProducts('earphones')" class="hover-lift bg-gradient-to-br from-pink-50 to-pink-100 p-8 rounded-2xl text-center cursor-pointer">
+                    <i class="fas fa-headphones category-icon"></i>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">السماعات</h3>
+                    <p class="text-gray-600 text-sm">صوت نقي وواضح</p>
+                </div>
+                
+                <div onclick="filterProducts('powerbanks')" class="hover-lift bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl text-center cursor-pointer">
+                    <i class="fas fa-battery-full category-icon"></i>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">باور بانك</h3>
+                    <p class="text-gray-600 text-sm">طاقة احتياطية دائمة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="products" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl font-bold text-gray-800 mb-4">المنتجات المميزة</h2>
+                <p class="text-gray-600 text-lg">اختر من بين أفضل منتجاتنا</p>
+            </div>
+            
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Products will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <section class="py-16 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="promo-banner text-center text-white">
+                <h2 class="text-4xl font-bold mb-4">عرض خاص!</h2>
+                <p class="text-2xl mb-6">خصم 30% على جميع الإكسسوارات</p>
+                <p class="text-lg mb-8">استخدم كود: SAVE30</p>
+                <button onclick="scrollToProducts()" class="bg-white text-indigo-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition">
+                    تسوق الآن
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <i class="fas fa-shipping-fast text-5xl mb-4" style="color: var(--primary)"></i>
+                    <h3 class="text-xl font-bold mb-2">شحن سريع</h3>
+                    <p class="text-gray-600">توصيل خلال 24-48 ساعة</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-shield-alt text-5xl mb-4" style="color: var(--primary)"></i>
+                    <h3 class="text-xl font-bold mb-2">دفع آمن</h3>
+                    <p class="text-gray-600">حماية SSL كاملة</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-undo text-5xl mb-4" style="color: var(--primary)"></i>
+                    <h3 class="text-xl font-bold mb-2">إرجاع مجاني</h3>
+                    <p class="text-gray-600">خلال 14 يوم</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-headset text-5xl mb-4" style="color: var(--primary)"></i>
+                    <h3 class="text-xl font-bold mb-2">دعم 24/7</h3>
+                    <p class="text-gray-600">فريق متاح دائماً</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl font-bold text-gray-800 mb-4">تواصل معنا</h2>
+                <p class="text-gray-600 text-lg">نحن هنا للإجابة على استفساراتك</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form onsubmit="handleContactSubmit(event)">
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <input type="text" placeholder="الاسم الكامل" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <input type="email" placeholder="البريد الإلكتروني" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <input type="text" placeholder="الموضوع" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6">
+                    <textarea placeholder="رسالتك" rows="6" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6"></textarea>
+                    <button type="submit" class="btn-primary w-full">
+                        <i class="fas fa-paper-plane ml-2"></i>
+                        إرسال الرسالة
+                    </button>
+                </form>
+                
+                <div class="grid md:grid-cols-3 gap-6 mt-8 pt-8 border-t">
+                    <div class="text-center">
+                        <i class="fas fa-envelope text-3xl mb-2" style="color: var(--primary)"></i>
+                        <p class="font-semibold">البريد الإلكتروني</p>
+                        <p class="text-gray-600 text-sm">info@mobilestore.com</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-phone text-3xl mb-2" style="color: var(--primary)"></i>
+                        <p class="font-semibold">الهاتف</p>
+                        <p class="text-gray-600 text-sm">+966 50 123 4567</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="fab fa-whatsapp text-3xl mb-2" style="color: var(--primary)"></i>
+                        <p class="font-semibold">واتساب</p>
+                        <p class="text-gray-600 text-sm">+966 50 123 4567</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">متجر الإكسسوارات</h3>
+                    <p class="text-gray-400 mb-4">أفضل إكسسوارات الهواتف المحمولة بأسعار تنافسية</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube text-2xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">روابط سريعة</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition">الرئيسية</a></li>
+                        <li><a href="#products" class="text-gray-400 hover:text-white transition">المنتجات</a></li>
+                        <li><a href="#categories" class="text-gray-400 hover:text-white transition">الأقسام</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">خدمة العملاء</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">الأسئلة الشائعة</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">سياسة الإرجاع</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">الشحن والتوصيل</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">طرق الدفع</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">طرق الدفع</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white rounded p-2 flex items-center justify-center">
+                            <i class="fab fa-cc-visa text-3xl text-blue-600"></i>
+                        </div>
+                        <div class="bg-white rounded p-2 flex items-center justify-center">
+                            <i class="fab fa-cc-mastercard text-3xl text-red-600"></i>
+                        </div>
+                        <div class="bg-white rounded p-2 flex items-center justify-center">
+                            <i class="fab fa-cc-paypal text-3xl text-blue-500"></i>
+                        </div>
+                        <div class="bg-white rounded p-2 flex items-center justify-center">
+                            <span class="text-sm font-bold text-gray-800">COD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 متجر الإكسسوارات. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b px-8 py-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold">سلة التسوق</h2>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="cart-items" class="p-8">
+                <!-- Cart items will be inserted here -->
+            </div>
+            
+            <div class="sticky bottom-0 bg-gray-50 border-t px-8 py-6">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-xl font-bold">الإجمالي:</span>
+                    <span id="cart-total" class="text-2xl font-bold" style="color: var(--primary)">0 ريال</span>
+                </div>
+                <button onclick="checkout()" class="btn-primary w-full">
+                    <i class="fas fa-credit-card ml-2"></i>
+                    إتمام الشراء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b px-8 py-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold">إتمام الطلب</h2>
+                <button onclick="closeCheckout()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-8">
+                <form onsubmit="processPayment(event)">
+                    <!-- Shipping Info -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4">معلومات الشحن</h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <input type="text" placeholder="الاسم الكامل" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="tel" placeholder="رقم الهاتف" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="email" placeholder="البريد الإلكتروني" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2">
+                            <input type="text" placeholder="المدينة" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" placeholder="الحي" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <textarea placeholder="العنوان الكامل" rows="3" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4">طريقة الدفع</h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="payment-option p-6 rounded-lg" onclick="selectPayment('card', this)">
+                                <i class="fas fa-credit-card text-3xl mb-3" style="color: var(--primary)"></i>
+                                <h4 class="font-bold mb-1">بطاقة ائتمان</h4>
+                                <p class="text-sm text-gray-600">Visa / MasterCard</p>
+                            </div>
+                            <div class="payment-option p-6 rounded-lg" onclick="selectPayment('paypal', this)">
+                                <i class="fab fa-paypal text-3xl mb-3" style="color: #00457C"></i>
+                                <h4 class="font-bold mb-1">PayPal</h4>
+                                <p class="text-sm text-gray-600">الدفع عبر PayPal</p>
+                            </div>
+                            <div class="payment-option p-6 rounded-lg" onclick="selectPayment('payoneer', this)">
+                                <i class="fas fa-money-check-alt text-3xl mb-3" style="color: #FF4800"></i>
+                                <h4 class="font-bold mb-1">Payoneer</h4>
+                                <p class="text-sm text-gray-600">الدفع عبر Payoneer</p>
+                            </div>
+                            <div class="payment-option p-6 rounded-lg" onclick="selectPayment('cod', this)">
+                                <i class="fas fa-hand-holding-usd text-3xl mb-3" style="color: var(--primary)"></i>
+                                <h4 class="font-bold mb-1">الدفع عند الاستلام</h4>
+                                <p class="text-sm text-gray-600">Cash on Delivery</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Details (shown when card is selected) -->
+                    <div id="card-details" class="hidden mb-8">
+                        <h3 class="text-xl font-bold mb-4">معلومات البطاقة</h3>
+                        <input type="text" placeholder="رقم البطاقة" maxlength="19"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="تاريخ الانتهاء (MM/YY)" maxlength="5"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" placeholder="CVV" maxlength="3"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-xl font-bold mb-4">ملخص الطلب</h3>
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">المجموع الفرعي:</span>
+                                <span class="font-semibold" id="checkout-subtotal">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">الشحن:</span>
+                                <span class="font-semibold">25 ريال</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2 mt-2">
+                                <span class="text-lg font-bold">الإجمالي:</span>
+                                <span class="text-xl font-bold" style="color: var(--primary)" id="checkout-total">25 ريال</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-shield-alt ml-2" style="color: var(--primary)"></i>
+                            <span>جميع المعاملات محمية بتقنية SSL</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary w-full text-lg">
+                        <i class="fas fa-lock ml-2"></i>
+                        تأكيد الطلب والدفع
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-6 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold">تسجيل الدخول</h2>
+                    <button onclick="closeLogin()" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <form onsubmit="handleLogin(event)">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">البريد الإلكتروني</label>
+                        <input type="email" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2">كلمة المرور</label>
+                        <input type="password" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button type="submit" class="btn-primary w-full mb-4">
+                        تسجيل الدخول
+                    </button>
+                    <p class="text-center text-gray-600">
+                        ليس لديك حساب؟ 
+                        <a href="#" class="font-bold hover:underline" style="color: var(--primary)">سجل الآن</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Products Data
+        const products = [
+            {
+                id: 1,
+                name: 'جراب سيليكون فاخر',
+                category: 'cases',
+                price: 89,
+                rating: 4.5,
+                reviews: 245,
+                image: 'https://placehold.co/300x300?text=Premium+silicone+phone+case+with+elegant+design+and+camera+protection',
+                description: 'جراب حماية فاخر بتصميم أنيق'
+            },
+            {
+                id: 2,
+                name: 'شاحن سريع 65W',
+                category: 'chargers',
+                price: 129,
+                rating: 5,
+                reviews: 512,
+                image: 'https://placehold.co/300x300?text=Fast+65W+wall+charger+with+dual+USB+ports+modern+design',
+                description: 'شاحن سريع بقوة 65 واط'
+            },
+            {
+                id: 3,
+                name: 'سماعات بلوتوث TWS',
+                category: 'earphones',
+                price: 199,
+                rating: 4.8,
+                reviews: 1023,
+                image: 'https://placehold.co/300x300?text=Wireless+Bluetooth+earbuds+TWS+in+charging+case+sleek+black',
+                description: 'سماعات لاسلكية بجودة صوت عالية'
+            },
+            {
+                id: 4,
+                name: 'باور بانك 20000mAh',
+                category: 'powerbanks',
+                price: 159,
+                rating: 4.6,
+                reviews: 687,
+                image: 'https://placehold.co/300x300?text=High+capacity+20000mAh+power+bank+with+digital+display',
+                description: 'بطارية احتياطية بسعة كبيرة'
+            },
+            {
+                id: 5,
+                name: 'حامل هاتف للسيارة',
+                category: 'cases',
+                price: 79,
+                rating: 4.3,
+                reviews: 342,
+                image: 'https://placehold.co/300x300?text=Magnetic+car+phone+holder+mount+dashboard+windshield',
+                description: 'حامل مغناطيسي قوي للسيارة'
+            },
+            {
+                id: 6,
+                name: 'كابل شحن Type-C',
+                category: 'chargers',
+                price: 49,
+                rating: 4.4,
+                reviews: 891,
+                image: 'https://placehold.co/300x300?text=Braided+USB+Type-C+charging+cable+durable+fast+charging',
+                description: 'كابل شحن سريع بطول 2 متر'
+            },
+            {
+                id: 7,
+                name: 'سماعات Gaming Pro',
+                category: 'earphones',
+                price: 279,
+                rating: 4.9,
+                reviews: 456,
+                image: 'https://placehold.co/300x300?text=Gaming+headset+with+RGB+lights+and+microphone+professional',
+                description: 'سماعات احترافية للألعاب'
+            },
+            {
+                id: 8,
+                name: 'شاحن لاسلكي 15W',
+                category: 'chargers',
+                price: 139,
+                rating: 4.7,
+                reviews: 623,
+                image: 'https://placehold.co/300x300?text=Wireless+charging+pad+15W+fast+charge+LED+indicator',
+                description: 'شاحن لاسلكي بشحن سريع'
+            }
+        ];
+
+        // Cart Management
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let selectedPaymentMethod = 'card';
+
+        // Display Products
+        function displayProducts(productsToShow = products) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = productsToShow.map(product => `
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-sm">
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.description}" class="w-full h-64 object-cover">
+                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            خصم 30%
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-3">${product.description}</p>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="rating-stars">
+                                ${generateStars(product.rating)}
+                            </div>
+                            <span class="text-sm text-gray-600">(${product.reviews})</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-2xl font-bold" style="color: var(--primary)">${product.price} ريال</span>
+                            </div>
+                            <button onclick="addToCart(${product.id})" 
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+                                <i class="fas fa-cart-plus"></i>
+                                أضف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            return stars;
+        }
+
+        // Filter Products
+        function filterProducts(category) {
+            const filtered = products.filter(p => p.category === category);
+            displayProducts(filtered);
+            scrollToProducts();
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            updateCart();
+            showNotification('تمت إضافة المنتج للسلة');
+        }
+
+        // Update Cart
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            displayCartItems();
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        function displayCartItems() {
+            const container = document.getElementById('cart-items');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-600 text-lg">السلة فارغة</p>
+                    </div>
+                `;
+                document.getElementById('cart-total').textContent = '0 ريال';
+                return;
+            }
+            
+            container.innerHTML = cart.map(item => `
+                <div class="flex gap-4 mb-6 pb-6 border-b">
+                    <img src="${item.image}" alt="${item.description}" class="w-24 h-24 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">${item.name}</h3>
+                        <p class="font-bold" style="color: var(--primary)">${item.price} ريال</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-2">
+                        <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-1">
+                            <button onclick="decreaseQuantity(${item.id})" class="text-gray-600 hover:text-gray-800">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span class="font-bold px-3">${item.quantity}</span>
+                            <button onclick="increaseQuantity(${item.id})" class="text-gray-600 hover:text-gray-800">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cart-total').textContent = `${total} ريال`;
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        function increaseQuantity(productId) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity++;
+                updateCart();
+            }
+        }
+
+        function decreaseQuantity(productId) {
+            const item = cart.find(item => item.id === productId);
+            if (item && item.quantity > 1) {
+                item.quantity--;
+                updateCart();
+            }
+        }
+
+        // Modal Functions
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('active');
+        }
+
+        function toggleSearch() {
+            const searchBar = document.getElementById('search-bar');
+            searchBar.classList.toggle('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('login-modal').classList.add('active');
+        }
+
+        function closeLogin() {
+            document.getElementById('login-modal').classList.remove('active');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('السلة فارغة', 'error');
+                return;
+            }
+            
+            toggleCart();
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('checkout-subtotal').textContent = `${total} ريال`;
+            document.getElementById('checkout-total').textContent = `${total + 25} ريال`;
+            document.getElementById('checkout-modal').classList.add('active');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.remove('active');
+        }
+
+        function selectPayment(method, element) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            const cardDetails = document.getElementById('card-details');
+            if (method === 'card') {
+                cardDetails.classList.remove('hidden');
+            } else {
+                cardDetails.classList.add('hidden');
+            }
+        }
+
+        function processPayment(event) {
+            event.preventDefault();
+            
+            closeCheckout();
+            showNotification('تم إتمام طلبك بنجاح! سيتم التواصل معك قريباً', 'success');
+            
+            // Clear cart
+            cart = [];
+            updateCart();
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            showNotification('تم تسجيل الدخول بنجاح');
+            closeLogin();
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            showNotification('تم إرسال رسالتك بنجاح. سنتواصل معك قريباً');
+            event.target.reset();
+        }
+
+        // Utility Functions
+        function scrollToProducts() {
+            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToCategories() {
+            document.getElementById('categories').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-24 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white font-semibold ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} text-xl"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            displayProducts();
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>
